@@ -4,7 +4,9 @@
 Annual Advent Calendar with code puzzels.
 
 ## Personal goals
-Try to get it right at the first attempt, so test =)
+Try to get it right at the first attempt! =)
+
+This is my personal archive of all my solved puzzles.
 
 ## Prequisities
 I try to solve the puzzles solely a the browser console.
@@ -19,5 +21,6 @@ So you need:
 input = 'copied\n\
 contents'.split('\n');
 ```
+
 ## Status
-On a roll for 2022, try catching up with past years... Joined december 2022...
+On a roll for 2022, try catch-up with past years... Joined december 2022...
