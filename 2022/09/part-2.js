@@ -22,91 +22,53 @@ const withinDistance = (head, tail) => Math.max(measureDistance(head, tail, 'x')
 
 // Refactor mover so it can drag a long tail
 const mover = (tracker, direction, movement) => {
-    let d = 'x', m = 1;
-    switch (direction) {
-      case 'U':
-        d = 'y';
-      case 'L':
-        m = -1;
-        break;
-      case 'D':
-        d = 'y';
-      case 'R':
-        break;
-      default:
-        console.log(`Direction "${direction}" not defined`);
-    }
+  let d = 'x', m = 1;
+  switch (direction) {
+    case 'U':
+      d = 'y';
+    case 'L':
+      m = -1;
+      break;
+    case 'D':
+      d = 'y';
+    case 'R':
+      break;
+    default:
+      console.log(`Direction "${direction}" not defined`);
+  }
 
-    for (let a = 0; a < movement; a++) {
-      // head just always moves
-      tracker.head[d] += m;
-      logTrail(tracker.head);
+  for (let a = 0; a < movement; a++) {
+    // head just always moves
+    tracker.head[d] += m;
+    logTrail(tracker.head);
 
-      // now we need to move every tail, every tail is anothers head
-      tracker.tail.reduce((head, tail, index) => {
+    // now we need to move every tail, every tail is anothers head
+    tracker.tail.reduce((head, tail, index) => {
 
-        // So far away, check where to move next
-        if (! withinDistance(head, tail)) {
+      // So far away, check where to move next
+      if (! withinDistance(head, tail)) {
 
-          const distance = {
-            'x': head.trail[head.trail.length - 2].x - tail.x,
-            'y': head.trail[head.trail.length - 2].y - tail.y
-          };
+        const distance = {
+          'x': head.x - tail.x,
+          'y': head.y - tail.y
+        };
 
-          if (distance.x === 0 || distance.y === 0) {
-            tail.x += distance.x;
-            tail.y += distance.y;
-            logTrail(tail);
+        tail.x += distance.x < 0 ? Math.max(-1, distance.x) : Math.min(1, distance.x);
+        tail.y += distance.y < 0 ? Math.max(-1, distance.y) : Math.min(1, distance.y);
+      }
 
-            return tail;
-          }
+      // Log result
+      logTrail(tail);
+      // Next knot
+      return tail;
 
-          const tailReducer = (ni, k, i) => {
-              const o = d === 'x' ? 'y' : 'x';
+      // I totally went bazinka on this one, utter failure.. see history... KISS was the solution
+      // This is why we have plotters, reversers, and everything now
+    }, tracker.head);
+  }
 
-              // Broken rope
-              if (!ni.c) {
-                return ni;
-              }
-
-              // everything on the same axis
-              // not already in the same line of head
-              (k === tail || (k[d] === tail[d] && k[o] !== head[o])) && ni.items.push(k);
-
-              // Only continue if continues rope
-              ni.c = ni.items.length === i + 1;
-
-              return ni;
-            },
-            tailInit = {'c': true, 'items': []};
-
-          // move all next items in same line by the same amount if x and y change
-          tracker.tail
-            .slice(index)
-            .reduce(tailReducer, tailInit).items // only allow a continious line && in the same line && not already in line
-            .reduce((ni, i) => {const l = ni.length; l > 0 && sameSpot(ni[l - 1], i) || ni.push(i); return ni;}, [])
-            .map(i => {
-
-              // Don't overshoot
-              if (i.x !== head.x) {
-                i.x += distance.x < 0 ? -1 : 1;
-              }
-              if (i.y !== head.y) {
-                i.y += distance.y < 0 ? -1 : 1;
-              }
-            });
-        }
-
-        // Log every item exaclty once
-        logTrail(tail);
-
-        // move to next part
-        return tail;
-      }, tracker.head);
-    }
-
-    return tracker;
-  };
+  return tracker;
+};
 
 // plotter - helper to find pesky bug
 const plotter = (tracker, step) => {
