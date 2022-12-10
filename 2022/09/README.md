@@ -7,3 +7,7 @@ Link: https://adventofcode.com/2022/day/9
 
 ## part two: snapped rope, now we have longer ropes
 [part-2.js](part-2.js)
+
+### bonus - vizualize
+- `plotter(tracker).toString()` to vizualize one step or specific step
+- `play(tracker)` will replay the rope play in console
