@@ -1,5 +1,5 @@
 // read input from the browser
-input = document.body.firstChild.innerHTML.split('\n');
+input = document.body.firstChild.innerText.split('\n');
 
 // create games and normalize data
 // AX => R

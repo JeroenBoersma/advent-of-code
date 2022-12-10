@@ -1,5 +1,6 @@
 // read input from the browser
-input = document.body.firstChild.innerHTML.split('\n').filter(l => l.length > 1);
+input = document.body.firstChild.innerText.split('\n').filter(l => l.length > 1);
+
 // build rucksacks and divide in compartments
 rucksacks = input.map(r => [r.substring(0, Math.floor(r.length /2)), r.substring(Math.floor(r.length /2))])
 // search items which are in both compartments, build a regexp

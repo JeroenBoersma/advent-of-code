@@ -1,5 +1,5 @@
 // get the input from the browser
-input = document.body.firstChild.innerHTML.split('\n');
+input = document.body.firstChild.innerText.split('\n');
 
 // create elves
 elf = 1; elves = input.map((c) => {return {'cal': c, 'elf': (elf += (c === '' ? 1 : 0))}}).filter(e => e.cal !== '');
