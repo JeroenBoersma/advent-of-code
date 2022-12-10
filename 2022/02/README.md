@@ -1,4 +1,4 @@
-# Play paper scissors rock
+# Rock Paper Scissors
 
 Link: https://adventofcode.com/2022/day/2
 

@@ -1,4 +1,4 @@
-# Solve the calories per elve
+# Calorie Counting
 
 Link: https://adventofcode.com/2022/day/1
 
