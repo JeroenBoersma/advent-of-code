@@ -2,7 +2,9 @@
 YEAR = $(shell date '+%Y')
 DAY  = $(shell date '+%d')
 
-TITLE = YOUR TITLE GOES HERE
+META_TITLE = YOUR TITLE GOES HERE
+META_YEAR = $(YEAR)
+META_DAY = $(subst 0,,$(DAY))
 
 FILE_PART_ONE = part-1.js
 FILE_PART_TWO = part-2.js
@@ -23,7 +25,7 @@ all: $(OUTPUT_FILE_README) $(OUTPUT_FILE_PART_ONE) $(OUTPUT_FILE_PART_TWO)
 $(OUTPUT_FILE_README): $(TEMPLATE_FILE_README)
 	mkdir -p $(OUTPUT_DIRECTORY)
 	cp $^ $@
-	sed -i -e 's/{YEAR}/$(YEAR)/g' -e 's/{DAY}/$(DAY)/g' -e 's/{TITLE}/$(TITLE)/g' $@
+	sed -i -e 's/{YEAR}/$(META_YEAR)/g' -e 's/{DAY}/$(META_DAY)/g' -e 's/{TITLE}/$(META_TITLE)/g' $@
 
 $(OUTPUT_FILE_PART_ONE): $(TEMPLATE_FILE_PART_ONE)
 	cp $^ $@;
