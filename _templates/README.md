@@ -1,6 +1,6 @@
 # {TITLE}
 
-Link: https://adventofcode.com/{YEAR}/day/{DAY}
+Link: {URL}
 
 ## part one:
 [part-1.js](part-1.js)

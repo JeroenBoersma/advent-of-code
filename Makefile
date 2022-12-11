@@ -5,6 +5,7 @@ DAY  = $(shell date '+%d')
 META_TITLE = YOUR TITLE GOES HERE
 META_YEAR = $(YEAR)
 META_DAY = $(subst S,,$(subst S0,,S$(DAY)))
+META_URL = https://adventofcode.com/$(META_YEAR)/day/$(META_DAY)
 
 FILE_PART_ONE = part-1.js
 FILE_PART_TWO = part-2.js
@@ -25,13 +26,21 @@ all: $(OUTPUT_FILE_README) $(OUTPUT_FILE_PART_ONE) $(OUTPUT_FILE_PART_TWO)
 $(OUTPUT_FILE_README): $(TEMPLATE_FILE_README)
 	mkdir -p $(OUTPUT_DIRECTORY)
 	cp $^ $@
-	sed -i -e 's/{YEAR}/$(META_YEAR)/g' -e 's/{DAY}/$(META_DAY)/g' -e 's/{TITLE}/$(META_TITLE)/g' $@
+	sed -i -e 's/{YEAR}/$(META_YEAR)/g' -e 's/{DAY}/$(META_DAY)/g' -e 's/{TITLE}/$(META_TITLE)/g' -e 's$${URL}$$$(META_URL)$$g' $@
 
 $(OUTPUT_FILE_PART_ONE): $(TEMPLATE_FILE_PART_ONE)
 	cp $^ $@;
 
 $(OUTPUT_FILE_PART_TWO): $(TEMPLATE_FILE_PART_TWO)
 	cp $^ $@;
+
+.PHONY: url
+url:
+	@echo $(META_URL)
+
+.PHONY: open
+open:
+	open $(META_URL)
 
 .PHONY: clean
 clean:
