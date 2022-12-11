@@ -23,6 +23,8 @@ OUTPUT_FILE_PART_TWO = $(OUTPUT_DIRECTORY)$(FILE_PART_TWO)
 
 IDE = code-insiders
 
+GITHUB_URL = $(subst git@,https://,$(subst :,/,$(shell git remote get-url origin)))
+
 all: $(OUTPUT_FILE_README) $(OUTPUT_FILE_PART_ONE) $(OUTPUT_FILE_PART_TWO)
 
 $(OUTPUT_FILE_README): $(TEMPLATE_FILE_README)
@@ -52,3 +54,6 @@ clean:
 ide:
 	$(IDE) . &
 
+.PHONY: gh
+gh:
+	open $(GITHUB_URL)
