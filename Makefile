@@ -4,7 +4,7 @@ DAY  = $(shell date '+%d')
 
 META_TITLE = YOUR TITLE GOES HERE
 META_YEAR = $(YEAR)
-META_DAY = $(subst 0,,$(DAY))
+META_DAY = $(subst S,,$(subst S0,,S$(DAY)))
 
 FILE_PART_ONE = part-1.js
 FILE_PART_TWO = part-2.js
