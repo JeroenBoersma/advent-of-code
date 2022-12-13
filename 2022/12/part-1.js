@@ -39,12 +39,11 @@ const getMarksAround = (heightMap, mark) => {
         [-1, 0],    // l
         [0, -1],    // u
     ].map(nextPos => {
-        const [x, y] = nextPos,
-        nextMark = (heightMap[mY+y] ?? [])[mX+x] ?? null;
+        const [x, y] = nextPos;
 
-        return nextMark;
+        return (heightMap[mY+y] ?? [])[mX+x] ?? null;
     }).filter(x => x && x.active);
-}
+};
 
 // Check from current which max 4 (u,d,l,r) next are valid
 const fillTubesOnMap = heightMap => {
@@ -60,8 +59,8 @@ const fillTubesOnMap = heightMap => {
         }
 
         // Get all items connected
-        getMarksAround(heightMap, mark).map(nextMark => {
-            const nextHeight = nextMark.height,
+        getMarksAround(heightMap, mark).map(tube => {
+            const nextHeight = tube.height,
                 diff = nextHeight - height;
 
             // Only go up
@@ -69,13 +68,13 @@ const fillTubesOnMap = heightMap => {
                 return;
             }
 
-            if (nextMark.start) {
+            if (tube.start) {
                 // We will never go back
                 return;
             }
 
             // Possible route
-            mark.tubes.push(nextMark);
+            mark.tubes.push(tube);
         });
 
         return mark;
@@ -90,34 +89,60 @@ const getRouteStart = heightMap => heightMap.flat().filter(m => m.start)[0],
     getAllHeightItems = (heightMap, height) => heightMap.flat().filter(m => m.active && m.height === height);
 
 // method to follow next
-const findRoutes = (mark, end, routes, visited) => {
-    routes = routes || [];
+const findRoute = (start, end) => {
+    const open = [], closed = [], route = [];
 
-    visited = visited || [];
-    visited = [...visited]; // Don't create a reference
+    // Add start to open list
+    open.push(start);
 
-    // We don't wan't to go back
-    // const next = mark.tubes.filter(n => n !== mark);
+    // Set f to zero
+    start.score.g = 0;
+    start.score.f = 0;
 
-    // we also don't walk in circles
-    if (visited.indexOf(mark) > -1) {
-        return Infinity;
+    while (open.length) {
+        const current = open.sort((a, b) => a.score.f - b.score.f).shift();
+        closed.push(current);
+
+        current.tubes.map(tube => {
+
+            if (closed.indexOf(tube) > -1) {
+                // Already processed
+                return;
+            }
+
+            // Set the back reference
+            tube.parent = current;
+
+            const g = current.score.g + 1,              // Distance form current + 1
+                h = Math.abs(end.pos.x - tube.pos.x) +  // Distance to finish // Manhattan
+                            Math.abs(end.pos.y - tube.pos.y),
+                f = g + h;                              // Score
+
+            // Better route
+            tube.score.g = g;
+            tube.score.h = h;
+            tube.score.f = f;
+
+            // This is the end
+            if (tube === end) {
+                return;
+            }
+
+            open.indexOf(tube) === -1 && open.push(tube);
+        });
     }
 
-    // push self to route
-    visited.push(mark);
+    if (end.parent) {
+        // Found a route
+        current = end;
+        while (current) {
+            route.unshift(current);
 
-    // if finish \\ HOORAY
-    if (mark === end) {
-        // Add visited to routes
-        routes.push([...visited]);
-
-        // Only the finish will return true
-        return visited.length;
+            current = current.parent;
+        }
     }
 
-    // Count posible routes
-    return Math.min(Infinity, ...mark.tubes.map(next => findRoutes(next, end, routes, visited)));
+    return route;
 };
 
 // Trying to find the whole route from S to E is a long way
@@ -249,14 +274,13 @@ const cleanupHeightMap = (heightMap) => {
 };
 
 const findShortestRoute = (start, end) => {
-    let routes = [];
 
     // Search perfect routes
-    findRoutes(start, end, routes);
+    route = findRoute(start, end);
 
-    console.log(`ROUTES FOUND: ${routes.length} from ${start.char}(${start.pos.x}, ${start.pos.y}) to ${end.char}(${end.pos.x}, ${end.pos.y})`);
+    console.log(`ROUTES LENGTH: ${route.length} from ${start.char}(${start.pos.x}, ${start.pos.y}) to ${end.char}(${end.pos.x}, ${end.pos.y})`);
 
-    return routes.sort((a, b) => a.length - b.length).shift()
+    return route;
 };
 
 const plotRoute = (heightMap, route) => {
@@ -314,7 +338,7 @@ const heightMap = fillTubesOnMap(createHeightMap(input)),
     routeEnd    = getRouteEnd(heightMap);
 
 // Remove garbage
-cleanupHeightMap(heightMap);
+// cleanupHeightMap(heightMap);
 
 // Find fastest route
 fastestRoute = findShortestRoute(routeStart, routeEnd);
