@@ -16,10 +16,9 @@ So you need:
 - the page with the input
 
 ## Tips
-- copy/paste the example code blocks
+- use the example code blocks
 ```javascript
-input = 'copied\n\
-contents'.split('\n');
+input = document.getSelection().focusNode.innerText.split('\n').filter(l => l.length);
 ```
 
 ## Status
