@@ -191,42 +191,7 @@ const cleanupHeightMap = (heightMap) => {
     });
 
     /**
-     * STEP TWO -- CLEAN EDGES
-     *
-     * edges cleanup
-     *
-     * ...
-     * .aa
-     * .ab
-     *
-     * both x+1 and y+1 get to b
-     * only one needs to stay
-     */
-    flatMap.map(mark => {
-        let edges = [];
-        mark.tubes.map(next => next.tubes.filter(e => {
-
-            // allow two way pass
-            if (mark === e) {
-                return true;
-            }
-
-            // already exists
-            if (edges.indexOf(e) > -1) {
-                console.log(`EXISTING PATH: ${next.char}(${next.pos.x}, ${next.pos.y}) to ${e.char}(${e.pos.x}, ${e.pos.y}) from ${mark.char} (${mark.pos.x}, ${mark.pos.y})`)
-                return false;
-            }
-
-            edges.push(e);
-
-            return true;
-        }));
-
-        return mark;
-    });
-
-    /**
-     * STEP TREE -- REMOVE RECURSIVE LINKS
+     * STEP TWO -- REMOVE RECURSIVE LINKS
      */
     let recursiveItems = [];
     while ((recursiveItems = flatMap.filter(mark => mark.active && !mark.end && mark.tubes.length === 1 && mark.tubes[0].tubes.filter(n => n === mark).length)).length > 0) {
@@ -237,7 +202,7 @@ const cleanupHeightMap = (heightMap) => {
     }
 
     /**
-     * STEP FOUR -- REMOVE END POINTS
+     * STEP TREE -- REMOVE END POINTS
      */
     let endMarks = [];
     while ((endMarks = flatMap.filter(mark => mark.active && !mark.end && mark.tubes.length === 1 && getMarksAround(heightMap, mark).length === 1)).length > 0) {
