@@ -24,3 +24,4 @@ shortestRoute = routes.sort((a, b) => a.length - b.length).filter(r => r.length)
 
 plotRoute(heightMap, shortestRoute);
 
+shortestRoute.length - 1;
