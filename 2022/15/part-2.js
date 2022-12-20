@@ -23,11 +23,11 @@ const candidates = []; // HEAT UP THAT MACHINE
 const rowtotal = grid.boundaries.maxX - grid.boundaries.minX;
 for (let y = grid.boundaries.minY; y < grid.boundaries.maxY; y++) {
 
-    y % 10 === 0 && console.log(`CHECKING LINE ${y}`);
+    y % 1000 === 0 && console.log(`CHECKING LINE ${y}`);
     const c = createCoverageReport(grid, sensors, y);
 
     // Check if current row is a candidate
-    if (c.c !== rowtotal) {
+    if (c.t > 0 && c.t !== rowtotal) {
         candidates.push([y, c]);
         break;
     }
@@ -41,7 +41,7 @@ candidates.map(c => {
     // I had deleted the items line
     // createCoverageReport(grid, sensors, y);
 
-    const y = c[0], row = c[1];
+    const y = c[0], row = c[1]['i'];
     for (let x = grid.boundaries.minX; x < grid.boundaries.maxX; x++) {
         const item = row[x] ?? null;
         if (null === item) {

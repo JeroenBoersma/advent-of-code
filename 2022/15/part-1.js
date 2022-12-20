@@ -21,7 +21,13 @@ const inputToData = (input, sensors, beacons) => {
                     "y": parseInt(m[0][7]),
                 },
                 "beacon": null,
-                "distance": Infinity
+                "distance": Infinity,
+                "boundaries": {
+                    "minX": -Infinity,
+                    "maxX": Infinity,
+                    "minY": -Infinity,
+                    "maxY": Infinity,
+                }
             },
             beacon = {
                 "type": "beacon",
@@ -35,6 +41,11 @@ const inputToData = (input, sensors, beacons) => {
         // If multiple items link to the same beacon, use the same data
         sensor.beacon = searchBeacon(beacon, beacons) ?? beacon;
         sensor.distance = getDistance(sensor, beacon);
+
+        sensor.boundaries.minX = sensor.pos.x - sensor.distance;
+        sensor.boundaries.maxX = sensor.pos.x + sensor.distance;
+        sensor.boundaries.minY = sensor.pos.y - sensor.distance;
+        sensor.boundaries.maxY = sensor.pos.y + sensor.distance;
 
         sensor.beacon.sensors.push(sensor);
 
@@ -64,9 +75,10 @@ const getBoundaries = (sensors, beacons) => {
 
         return [minX, maxX, minY, maxY];
     },
-    getDistance = (item1, item2) => {
-        return Math.abs(item1.pos.x - item2.pos.x) + Math.abs(item1.pos.y - item2.pos.y);
-    }
+    getDistanceForDirection = (item1, item2, direction) =>
+        Math.abs(item1.pos[direction] - item2.pos[direction]),
+    getDistance = (item1, item2) =>
+        getDistanceForDirection(item1, item2, 'x') + getDistanceForDirection(item1, item2, 'y');
 
 const fillGrid = (grid, sensors, beacons) => {
 
@@ -105,31 +117,91 @@ const createCoverageReport = (grid, sensors, focusRow) => {
     const items = grid.items
     let coverage = {
         'c': 0,
+        't': 0,
         'i': {}
     };
 
-    sensors.map(sensor => {
-        const b = grid.boundaries,
-            sp = sensor.pos,
-            distance = sensor.distance;
+    // Sort on x left to right
+    const boundaries = {},
+        sensorKey = sensor => sensor.pos.x + 'x' + sensor.pos.y,
+        sortedSensors = sensors.filter(sensor => sensor.boundaries.minY <= focusRow && sensor.boundaries.maxY >= focusRow)
+            .map(sensor => {
+                const key = sensorKey(sensor),
+                    distance = getDistance(sensor, {pos: {x: sensor.pos.x, y: focusRow}});
 
-        const minY = sp.y - distance,
-            maxY = sp.y + distance;
+                boundaries[key] = {
+                    minX: (sensor.pos.x - (sensor.distance - distance)),
+                    maxX: (sensor.pos.x + (sensor.distance - distance)),
+                }
+
+                return sensor;
+            })
+            .sort((a, b) => {
+                const keyA = sensorKey(a),
+                    keyB = sensorKey(b);
+
+                return boundaries[keyA].minX - boundaries[keyB].minX;
+            });
+
+    const area = Object.values(boundaries).sort((a, b) => a.minX - b.minX === 0 ? a.maxX - b.maxX : a.minX - b.minX)
+        .map(b => ({
+            minX: Math.max(b.minX, grid.boundaries.minX),
+            maxX: Math.min(b.maxX, grid.boundaries.maxX)
+        }))
+        .reduce((c, b) => {
+            const l = c[c.length - 1];
+
+            // l fully covered by b
+            if (l && l.maxX <= b.maxX && l.minX >= b.minX) {
+                l.maxX = b.maxX;
+                return c;
+            }
+
+            // continious range up
+            if (l && l.maxX <= b.maxX && l.maxX >= b.minX) {
+                l.maxX = b.maxX;
+                return c;
+            }
+
+            // l covers b
+            if (l && l.maxX >= b.maxX && l.minX <= b.minX) {
+                return c;
+            }
+
+            c.push(b);
+
+            return c;
+        }, []);
+
+    // fully covered, no calculations
+    if (area.length === 1 && area[0].maxX - area[0].minX === grid.boundaries.maxX - grid.boundaries.minX) {
+        coverage.t = area[0].maxX - area[0].minX;
+        return coverage;
+    }
+
+    let lastMinX = grid.boundaries.minX;
+
+    sortedSensors.map(sensor => {
+        const b = grid.boundaries;//,
+            // sb = sensor.boundaries,
+            // sp = sensor.pos,
+            // distance = sensor.distance;
 
         // Check if within focusrow
-        if (focusRow < minY || focusRow > maxY) {
-            // No need to check
-            return;
-        }
+        // if (focusRow < sb.minY || focusRow > sb.maxY) {
+        //     // No need to check
+        //     return coverage;
+        // }
 
-        let y = focusRow;
+        const y = focusRow;
         {
         // for (let y = focusRow; y < focusRow; y++) {
-            const nd = getDistance(sensor, {pos:{x:sp.x,y:y}}),
-                minX = Math.max(b.minX, sp.x - (distance-nd)),
-                maxX = Math.min(b.maxX, sp.x + (distance-nd) + 1);
+            const key = sensorKey(sensor),
+                sb = boundaries[key],
+                minX = Math.max(lastMinX, sb.minX),
+                maxX = Math.min(b.maxX, sb.maxX + 1);
 
-            // console.log(sp, distance, minY, maxY, minX, maxX);
+            lastMinX = maxX - 2;
 
             const row = items[y] || null;
             for (let x = minX; x < maxX; x++) {
@@ -140,6 +212,7 @@ const createCoverageReport = (grid, sensors, focusRow) => {
                 const i = (row && row[x] || coverage.i[x]) ? 0 : 1;
 
                 coverage.c += i;
+                coverage.t += coverage.i[x] ? 0 : 1;
                 coverage.i[x] = 1;
 
                 // const d = getDistance(sensor, {pos: {x: x, y: y}});
