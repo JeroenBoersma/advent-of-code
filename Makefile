@@ -21,7 +21,7 @@ OUTPUT_FILE_README = $(OUTPUT_DIRECTORY)$(FILE_README)
 OUTPUT_FILE_PART_ONE = $(OUTPUT_DIRECTORY)$(FILE_PART_ONE)
 OUTPUT_FILE_PART_TWO = $(OUTPUT_DIRECTORY)$(FILE_PART_TWO)
 
-IDE = code-insiders
+IDE = code
 
 GITHUB_URL = $(subst git@,https://,$(subst :,/,$(shell git remote get-url origin)))
 
