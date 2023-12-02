@@ -1,6 +1,23 @@
 # Advent of Code
 :christmas_tree:
 
+```
+            *
+           /|\
+          /*|*\
+         /**|**\
+       /****|****\
+      /*****|*****\
+     /*****|******/\
+    *******|********\
+   /*******o|*******o\
+  /*********|*********\
+           |||
+           |||
+           |||    🦌
+```
+*gpt representation of a Chrismas on the fourth try with a deer next to it*
+
 Annual Advent Calendar with code puzzels.
 
 ## Personal goals
