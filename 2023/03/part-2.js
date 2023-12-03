@@ -33,4 +33,4 @@ const groupByGears = engine => {
 
 const gears = groupByGears(engine),
     sum2 = gears.filter(gear => gear.c === '*' && gear.numbers.length === 2)
-        .reduce((t, gear) => gear.numbers.reduce((t, number => t * number.number, 1) + t, 0);
+        .reduce((t, gear) => gear.numbers.reduce((t, number) => t * number.number, 1) + t, 0);

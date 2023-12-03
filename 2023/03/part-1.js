@@ -51,7 +51,7 @@ const createEngineSchema = (rows) => {
             grid[y][x].match(/^[^\d\.]$/) && number.chars.push({
                 'x': x,
                 'y': y,
-                'g': grid[y][x]
+                'c': grid[y][x]
             })
         });
 

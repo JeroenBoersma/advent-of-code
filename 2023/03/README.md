@@ -1,4 +1,4 @@
-# YOUR TITLE GOES HERE
+# Gear Ratios
 
 Link: https://adventofcode.com/2023/day/3
 
