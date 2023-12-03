@@ -1,1 +1,1 @@
-input = document.body.firstChild.innerText.split('\n').filter(l => l.length);
+const input = document.body.firstChild.innerText.split('\n').filter(l => l.length);
