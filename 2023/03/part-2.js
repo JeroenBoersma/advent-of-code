@@ -20,13 +20,17 @@ const groupByGears = engine => {
             return newGear;
         };
 
-    numbers.forEach(number => number.chars.forEach(({x: x, y: y, c: c}) => {
+    engine.forEach(number => number.chars.forEach(({x: x, y: y, c: c}) => {
         const gear = findOrCreateGear(x, y, c);
-        console.log(gear)
-        gear.numbers.push(number);
+
+        // check if number already exists or add
+        gear.numbers.filter(n => n === number).length ||
+            gear.numbers.push(number);
     }));
     
     return gears;
 }
 
-const gears = groupByGears(engine)
+const gears = groupByGears(engine),
+    sum2 = gears.filter(gear => gear.c === '*' && gear.numbers.length === 2)
+        .reduce((t, gear) => gear.numbers.reduce((t, number => t * number.number, 1) + t, 0);
