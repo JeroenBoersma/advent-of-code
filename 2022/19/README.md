@@ -1,4 +1,4 @@
-# YOUR TITLE GOES HERE
+# Not Enough Minerals
 
 Link: https://adventofcode.com/2022/day/19
 
