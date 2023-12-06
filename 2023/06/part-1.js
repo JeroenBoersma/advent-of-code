@@ -34,4 +34,5 @@ const normalizeInput = input => input.map(row => row.split(':')[1])
         };
 
 const gameData = normalizeInput(input),
-    records = beatTheRecord(gameData[0], gameData[1]);
+    records = beatTheRecord(gameData[0], gameData[1]),
+    sum = records.reduce((c, r) => c *r.length, 1);
