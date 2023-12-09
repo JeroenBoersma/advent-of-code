@@ -44,7 +44,7 @@ const solveGhostMaze = (instructions, maze, start, finish, allowed) => {
             }
         }
 
-        return finished.reduce((c, b) => (c * b) / gcd(c, b));
+        return finished.reduce((c, b) => (c * b) / gcd(c, b), 1);
     };
 
 const sum2 = solveGhostMaze(instructions, maze, /A$/, /Z$/, Infinity);
