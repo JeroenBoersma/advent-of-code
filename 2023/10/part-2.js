@@ -16,7 +16,7 @@ const gridWithOneMaze = (grid, path) => [...grid].map(l =>
                     onPipeState = 1;
                 } else if (onPipe && e.shape === '-') {
                     onPipeState++;
-                } else {
+                } else if (!onPipe) {
                     onPipeState = 0;
                 }
 
@@ -25,6 +25,10 @@ const gridWithOneMaze = (grid, path) => [...grid].map(l =>
                 if (!onPipe && onPipeState === 0) {
                     // hop over pipe changes state
                     inside = !inside;
+
+                    if (inside) {
+                        // e.shape = 'I';
+                    }
                 }
 
                 inside && (holeSize++) && (onPipeState = 0);

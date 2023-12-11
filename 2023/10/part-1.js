@@ -106,6 +106,7 @@ const directions = {
 
         let current = start.neighbors[0]; // go one direction
 
+        path.push(start);
         while (true) {
             // console.log(current);
 
@@ -116,7 +117,7 @@ const directions = {
 
             // if you go back - exit - circuit braker
             if (!current || path.indexOf(current) > -1) {
-                return -1;
+                return path;
             }
             path.push(current); // only once
 
