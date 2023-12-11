@@ -36,7 +36,19 @@ const gridWithOneMaze = (grid, path) => [...grid].map(l =>
         });
 
         return holeSize;
-    }
+    },
+    printGrid2 = grid => console.log('\n' + grid.map(l => 
+        l.map(e =>
+            e.shape
+                .replace('J', '╝')
+                .replace('7', '╗')
+                .replace('F', '╔')
+                .replace('L', '╚')
+                .replace('-', '═')
+                .replace('|', '║')
+                .replace('.', ' ')
+            ).join('')
+        ).join('\n'))
     ;
 
 const path = createPath(start, start),
