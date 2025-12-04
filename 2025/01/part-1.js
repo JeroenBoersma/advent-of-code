@@ -2,9 +2,9 @@ const input = document.body.firstChild.innerText.split('\n').filter(l => l.lengt
 
 const start = 50, min = 0, max = 100;
 
-let result = input.map(r => Math.abs((r[0] === 'L' ? min - max : 0) + (parseInt(r.substring(1)) % 100)))
+let result = input.map(r => Math.abs((r[0] === 'L' ? min - max : 0) + (parseInt(r.substring(1)) % max)))
         .reduce((r, v) => {
-            r.push((r[r.length - 1] + v) % 100);
+            r.push((r[r.length - 1] + v) % max);
             return r;
         }, [start])
 
