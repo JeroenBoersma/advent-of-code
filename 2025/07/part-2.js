@@ -1,0 +1,1 @@
+console.log(splitter(start[0], start[1], false) + 1)
