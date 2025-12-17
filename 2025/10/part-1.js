@@ -8,24 +8,27 @@ const machines = input.map(l => l.match(/^\[([^\]]+)\] (.*) \{([^\}]+)\}/))
                 })),
       validateLights = (lights, target) => lights.reduce((b, l, i) => b && l === target[i], true),
       visualizeLights = lights => lights.map(x => x ? '#' : '.').join(''),
+      permutate = (buttons) => {
+          const permutations = [];
+
+          if (buttons.length < 1) {
+            return []
+          }
+
+          const copy = [...buttons];
+
+          while (copy.length > 0) {
+            const current = copy.shift();
+
+            permutations.push([current]);
+
+            permutate(copy).forEach(p => permutations.push([current, ...p]));
+          }
+
+          return permutations;
+        },
       startSequences = () => {
         const result = [],
-              premutate = (buttons) => {
-                const permuations = [];
-
-                const clone = [...buttons];
-
-                while (clone.length > 0) {
-
-                  for (let a = 1; a < clone.length; a++) {
-                      permuations.push([...clone.slice(0, a)]);
-                  }
-
-                  clone.shift();
-                }
-
-                return permuations;
-              },
               validateButtons = (buttons, lights) => {
                 const target = lights.map(x => false);
 
@@ -35,9 +38,7 @@ const machines = input.map(l => l.match(/^\[([^\]]+)\] (.*) \{([^\}]+)\}/))
               }
 
         machines.forEach(({lights, buttons}) => {
-            const permuations = premutate(buttons).sort((a, b) => a.length - b.length);
-
-            console.log(permuations)
+            const permuations = permutate(buttons).sort((a, b) => a.length - b.length);
 
 
             for (let a = 0; a < permuations.length; a++) {
@@ -46,9 +47,6 @@ const machines = input.map(l => l.match(/^\[([^\]]+)\] (.*) \{([^\}]+)\}/))
                 return;
               }
             }
-
-            console.log(visualizeLights(lights), permuations)
-
         });
 
         return result;
